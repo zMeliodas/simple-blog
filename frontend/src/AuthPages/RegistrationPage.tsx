@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { useAuthState } from "../auth/store";
-import { supabase } from "../auth/supabaseClient";
+import { useAppSelector } from "../redux/store";
+import { supabase } from "../services/supabaseClient";
 
 interface RegisterUserCredentials {
   fullName: string;
@@ -11,7 +11,7 @@ interface RegisterUserCredentials {
 }
 
 const RegistrationPage = () => {
-  const { session, initialized } = useAuthState((s) => s.auth);
+  const { session, initialized } = useAppSelector((state) => state.auth);
 
   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -24,7 +24,7 @@ const RegistrationPage = () => {
     });
 
   if (!initialized) return null;
-  
+
   if (session) return <Navigate to="/home" replace />;
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {

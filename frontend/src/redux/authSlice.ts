@@ -1,6 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { Session } from "@supabase/supabase-js";
-import type { PayloadAction } from "@reduxjs/toolkit";
 
 interface AuthState {
   session: Session | null;

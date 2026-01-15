@@ -1,8 +1,8 @@
 import { Link, Navigate } from "react-router-dom";
 import { useState, type FormEvent } from "react";
-import { supabase } from "../auth/supabaseClient";
-import { useAppDispatch, useAuthState } from "../auth/store";
-import { setSession } from "../auth/authSlice";
+import { supabase } from "../services/supabaseClient";
+import { useAppDispatch, useAppSelector } from "../redux/store";
+import { setSession } from "../redux/authSlice";
 
 interface LoginUserCredentials {
   email: string;
@@ -10,7 +10,7 @@ interface LoginUserCredentials {
 }
 
 const LoginPage = () => {
-  const { session, initialized } = useAuthState((s) => s.auth);
+  const { session, initialized } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
 
   const [userCredentials, setUserCredentials] = useState<LoginUserCredentials>({

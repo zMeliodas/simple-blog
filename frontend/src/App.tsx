@@ -1,4 +1,4 @@
-import Navbar from "./Navbar";
+import Navbar from "./common/Navbar.tsx";
 import BlogPage from "./BlogPage/BlogPage";
 import RegistrationPage from "./AuthPages/RegistrationPage";
 import LoginPage from "./AuthPages/LoginPage";
@@ -7,15 +7,15 @@ import EditBlog from "./BlogPage/EditBlog";
 import ViewBlog from "./BlogPage/ViewBlog";
 import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useAuthState } from "./auth/store.ts";
-import { useAppDispatch } from "./auth/store.ts";
-import { initAuth } from "./auth/initAuth.ts";
-import ProtectedRoute from "./ProtectedRoute.tsx";
+import { useAppSelector } from "./redux/store.ts";
+import { useAppDispatch } from "./redux/store.ts";
+import { initAuth } from "./utils/initAuth.ts";
+import ProtectedRoute from "./utils/ProtectedRoute.tsx";
 
 const App = () => {
   const dispatch = useAppDispatch();
 
-  const { initialized } = useAuthState((state) => state.auth);
+  const { initialized } = useAppSelector((state) => state.auth);
 
   useEffect(() => {
     const { subscription } = initAuth(dispatch).data;

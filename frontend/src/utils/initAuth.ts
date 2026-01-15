@@ -1,6 +1,6 @@
-import { supabase } from "./supabaseClient.ts";
-import { setSession } from "./authSlice.ts";
-import type { AppDispatch } from "./store.ts";
+import { supabase } from "../services/supabaseClient.ts";
+import { setSession } from "../redux/authSlice.ts";
+import type { AppDispatch } from "../redux/store.ts";
 
 export function initAuth(dispatch: AppDispatch) {
     

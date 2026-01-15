@@ -1,9 +1,9 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { useAuthState } from "./auth/store";
+import { useAppSelector } from "../redux/store";
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { session, initialized } = useAuthState((state) => state.auth);
+  const { session, initialized } = useAppSelector((state) => state.auth);
 
   if (!initialized) return null;
 
