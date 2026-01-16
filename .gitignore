@@ -1,2 +1,3 @@
 frontend/.env.local
 .vercel
+/frontend/node_modules
