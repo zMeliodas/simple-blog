@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { setSelectedBlogId } from "../redux/BlogSlice";
+import { setSelectedBlogId } from "../redux/blogSlice";
 import { useDispatch } from "react-redux";
 
 interface BlogProps {

@@ -16,7 +16,7 @@ const Pagination = ({
   next,
 }: PaginationTypes) => {
   return (
-    <div className="mt-8 flex items-center justify-center gap-4">
+    <div className="flex mt-8 items-center justify-center gap-4">
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}

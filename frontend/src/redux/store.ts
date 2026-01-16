@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice.ts";
-import blogReducer from "./BlogSlice.ts";
+import blogReducer from "./blogSlice.ts";
 import { useDispatch, useSelector } from "react-redux";
 
 export const store = configureStore({
