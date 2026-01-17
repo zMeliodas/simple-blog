@@ -51,7 +51,6 @@ const LoginPage = () => {
       if (error) throw error;
       alert("Login success! Welcome!");
       dispatch(setSession(data.session));
-      console.log(data);
     } catch (error) {
       alert(String(error));
     }
