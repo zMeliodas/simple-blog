@@ -52,6 +52,11 @@ const EditBlog = () => {
   };
 
   useEffect(() => {
+    if (!selectedBlogId) {
+      navigate("/home");
+      return;
+    }
+
     const fetchSelectedBlog = async () => {
       try {
         const { data, error } = await supabase
