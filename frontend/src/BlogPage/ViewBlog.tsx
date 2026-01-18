@@ -75,7 +75,7 @@ const ViewBlog = () => {
 
   return (
     <div className="bg-backgroundColor flex flex-col items-center gap-4 h-screen overflow-auto pt-24">
-      <div className="w-4xl mx-auto px-4 py-8">
+      <div className="max-w-4xl mx-auto px-4 py-8">
         <Link
           to="/home"
           className="text-indigo-600 hover:text-indigo-800 mb-6 flex items-center gap-2"
@@ -83,13 +83,13 @@ const ViewBlog = () => {
           ← Back to Home
         </Link>
         <article className="bg-white rounded-lg shadow-md p-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-1">
+          <h1 className="text-xl md:text-2xl lg:text-4xl font-bold text-gray-800 mb-1">
             {blog.title}
           </h1>
           <div className="text-sm text-gray-500 mb-4">
             By {blog.author} • {formatDate(blog.created_at)}
           </div>
-          <div className="prose prose-lg text-gray-700 whitespace-pre-wrap">
+          <div className="text-base text-gray-700 whitespace-pre-wrap">
             {blog.content}
           </div>
 

@@ -52,8 +52,8 @@ const CreateBlog = () => {
   };
 
   return (
-    <div className="bg-backgroundColor flex flex-col items-center gap-4 h-screen pt-24">
-      <div className="bg-backgroundColor w-3xl mx-auto px-4 py-8">
+    <div className="bg-backgroundColor flex flex-col w-screen items-center gap-4 h-screen pt-24">
+      <div className="bg-backgroundColor w-full max-w-3xl mx-auto px-4 py-8">
         <h2 className="text-3xl font-bold text-gray-800 mb-8">
           Create New Blog Post
         </h2>

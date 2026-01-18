@@ -20,8 +20,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-backgroundColor flex px-4 justify-between items-center py-1 w-full fixed h-22 shadow-md">
-      <Link to="/" className="text-indigo-600 flex font-bold text-2xl">
+    <nav className="bg-backgroundColor flex px-4 items-center py-1 w-full fixed h-22 shadow-md">
+      <Link to="/" className="text-indigo-600 flex-1 font-bold text-2xl">
         Simple Blog App
       </Link>
 

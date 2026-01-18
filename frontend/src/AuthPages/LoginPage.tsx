@@ -57,8 +57,8 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="bg-backgroundColor flex flex-col items-center gap-4 h-screen pt-24">
-      <div className="w-lg mx-auto px-4 py-18">
+    <div className="bg-backgroundColor flex flex-col items-center gap-4 w-screen h-screen pt-24">
+      <div className="w-full max-w-lg mx-auto px-4 py-18">
         <div className="bg-white rounded-lg shadow-md p-8">
           <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center">
             Login

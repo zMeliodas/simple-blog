@@ -20,13 +20,13 @@ const Blog = ({ blogTitle, author, date, excerpt, blogId }: BlogProps) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md w-5xl p-6 hover:shadow-lg transition">
-      <button
+    <div className="bg-white rounded-lg shadow-md w-full lg:w-5xl p-6 hover:shadow-lg transition">
+      <p
         onClick={() => handleBlogSelect(blogId)}
         className="text-2xl font-bold text-gray-800 mb-1 cursor-pointer hover:text-indigo-600"
       >
         {blogTitle}
-      </button>
+      </p>
       <div className="text-sm text-gray-500 mb-3">
         By {author} • {date}
       </div>
