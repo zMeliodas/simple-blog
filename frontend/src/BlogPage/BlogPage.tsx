@@ -75,7 +75,7 @@ const BlogPage = () => {
   }
 
   return (
-    <div className="bg-backgroundColor flex flex-col items-center gap-2 pt-24 p-4 h-screen">
+    <div className="bg-backgroundColor flex flex-col items-center gap-2 pt-24 p-4 h-screen overflow-auto">
       <button className="text-indigo-600 font-bold text-3xl pt-4 pb-2">
         Latest Blog Posts
       </button>
