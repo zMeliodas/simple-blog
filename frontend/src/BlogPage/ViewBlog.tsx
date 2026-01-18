@@ -21,7 +21,7 @@ const ViewBlog = () => {
 
   const handleDeleteBlog = async () => {
     const confirmed = window.confirm(
-      "Are you sure you want to delete this blog? This action cannot be undone."
+      "Are you sure you want to delete this blog? This action cannot be undone.",
     );
 
     if (!confirmed) return;
@@ -41,6 +41,11 @@ const ViewBlog = () => {
   };
 
   useEffect(() => {
+    if (!selectedBlogId) {
+      navigate("/home");
+      return;
+    }
+
     const fetchSelectedBlog = async () => {
       try {
         setIsLoading(true);
@@ -83,7 +88,7 @@ const ViewBlog = () => {
           ← Back to Home
         </Link>
         <article className="bg-white rounded-lg shadow-md p-8">
-          <h1 className="text-xl md:text-2xl lg:text-4xl font-bold text-gray-800 mb-1">
+          <h1 className="text-3xl lg:text-4xl font-bold text-gray-800 mb-1">
             {blog.title}
           </h1>
           <div className="text-sm text-gray-500 mb-4">
