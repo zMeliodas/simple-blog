@@ -3,22 +3,18 @@ import { useAppSelector } from "../redux/store.ts";
 import { useEffect } from "react";
 import { supabase } from "../services/supabaseClient.ts";
 import { useNavigate, Link } from "react-router-dom";
-
-interface BlogTypes {
-  title: string;
-  content: string;
-}
+import { type CreateBlogTypes } from "../types/types.ts";
 
 const EditBlog = () => {
   const navigate = useNavigate();
   const { selectedBlogId } = useAppSelector((state) => state.blog);
 
-  const [updatedBlog, setUpdatedBlog] = useState<BlogTypes>({
+  const [updatedBlog, setUpdatedBlog] = useState<CreateBlogTypes>({
     title: "",
     content: "",
   });
 
-  const [blog, setBlog] = useState<BlogTypes>({
+  const [blog, setBlog] = useState<CreateBlogTypes>({
     title: "",
     content: "",
   });

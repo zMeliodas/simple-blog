@@ -1,14 +1,10 @@
 import { useState } from "react";
 import { supabase } from "../services/supabaseClient";
 import { Link } from "react-router-dom";
-
-interface BlogTypes {
-  title: string;
-  content: string;
-}
+import { type CreateBlogTypes } from "../types/types";
 
 const CreateBlog = () => {
-  const [blogInfo, setBlogInfo] = useState<BlogTypes>({
+  const [blogInfo, setBlogInfo] = useState<CreateBlogTypes>({
     title: "",
     content: "",
   });
@@ -99,7 +95,10 @@ const CreateBlog = () => {
             >
               Publish Blog
             </button>
-            <Link to="/home" className="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition font-medium">
+            <Link
+              to="/home"
+              className="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition font-medium"
+            >
               Cancel
             </Link>
           </div>

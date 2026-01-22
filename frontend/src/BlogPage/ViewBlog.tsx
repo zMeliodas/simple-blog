@@ -4,18 +4,11 @@ import { supabase } from "../services/supabaseClient";
 import { formatDate } from "../utils/utils";
 import { useAppSelector } from "../redux/store.ts";
 import CustomSpinner from "../common/CustomSpinner.tsx";
-
-interface ViewBlogProps {
-  title: string;
-  author: string;
-  created_at: string;
-  content: string;
-  id: string;
-}
+import { type BlogTypes } from "../types/types.ts";
 
 const ViewBlog = () => {
   const navigate = useNavigate();
-  const [blog, setBlog] = useState<ViewBlogProps | null>(null);
+  const [blog, setBlog] = useState<BlogTypes | null>(null);
   const { selectedBlogId } = useAppSelector((state) => state.blog);
   const [loading, setIsLoading] = useState<Boolean>(false);
 
@@ -80,7 +73,7 @@ const ViewBlog = () => {
 
   return (
     <div className="bg-backgroundColor flex flex-col items-center gap-4 h-screen overflow-auto pt-24">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="w-full max-w-4xl mx-auto px-4 py-8">
         <Link
           to="/home"
           className="text-indigo-600 hover:text-indigo-800 mb-6 flex items-center gap-2"

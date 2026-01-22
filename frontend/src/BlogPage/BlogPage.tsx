@@ -7,7 +7,7 @@ import Pagination from "../common/Pagination";
 import { FaArrowLeft } from "react-icons/fa6";
 import { FaArrowRight } from "react-icons/fa6";
 
-interface Blog {
+interface BlogTypes {
   id: string;
   created_at: string;
   title: string;
@@ -17,7 +17,7 @@ interface Blog {
 
 const BlogPage = () => {
   const PAGE_SIZE = 3;
-  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [blogs, setBlogs] = useState<BlogTypes[]>([]);
   const [loading, setIsLoading] = useState<Boolean>(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -90,11 +90,11 @@ const BlogPage = () => {
         blogs.map((blog) => (
           <Blog
             key={blog.id}
-            blogTitle={blog.title}
+            title={blog.title}
             author={blog.author}
-            date={formatDate(blog.created_at)}
-            excerpt={excerpt(blog.content)}
-            blogId={blog.id}
+            created_at={formatDate(blog.created_at)}
+            content={excerpt(blog.content)}
+            id={blog.id}
           />
         ))
       )}
