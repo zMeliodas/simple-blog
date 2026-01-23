@@ -3,6 +3,7 @@ import { useState, type FormEvent } from "react";
 import { supabase } from "../services/supabaseClient";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { setSession } from "../redux/authSlice";
+import CustomSpinner from "../common/CustomSpinner";
 
 interface LoginUserCredentials {
   email: string;
@@ -12,6 +13,7 @@ interface LoginUserCredentials {
 const LoginPage = () => {
   const { session, initialized } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const [userCredentials, setUserCredentials] = useState<LoginUserCredentials>({
     email: "",
@@ -42,6 +44,8 @@ const LoginPage = () => {
       return;
     }
 
+    setIsLoading(true);
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email: userCredentials.email,
@@ -53,6 +57,8 @@ const LoginPage = () => {
       dispatch(setSession(data.session));
     } catch (error) {
       alert(String(error));
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -86,9 +92,11 @@ const LoginPage = () => {
 
             <button
               type="submit"
-              className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition font-medium"
+              disabled={isLoading}
+              className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-400 transition font-medium flex items-center content-center justify-center gap-1"
             >
-              Login
+              {isLoading && <CustomSpinner color="color-white" mt="mt-0" />}
+              <span>Login</span>
             </button>
           </form>
           <p className="text-center text-gray-600 mt-2">

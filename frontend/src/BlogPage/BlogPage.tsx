@@ -6,14 +6,7 @@ import CustomSpinner from "../common/CustomSpinner";
 import Pagination from "../common/Pagination";
 import { FaArrowLeft } from "react-icons/fa6";
 import { FaArrowRight } from "react-icons/fa6";
-
-interface BlogTypes {
-  id: string;
-  created_at: string;
-  title: string;
-  content: string;
-  author: string;
-}
+import { type BlogTypes } from "../types/types";
 
 const BlogPage = () => {
   const PAGE_SIZE = 3;
@@ -42,12 +35,22 @@ const BlogPage = () => {
       const from = (page - 1) * PAGE_SIZE;
       const to = from + PAGE_SIZE - 1;
 
-      const { data, error, count } = await supabase
+      // const { data, error, count } = await supabase
+      //   .from("Blogs")
+      //   .select("id, created_at, title, content, author, image_url", {
+      //     count: "exact",
+      //   })
+      //   .eq("user_id", user.id)
+      //   .order("created_at", { ascending: false })
+      //   .range(from, to);
+
+        const { data, error, count } = await supabase
         .from("Blogs")
-        .select("id, created_at, title, content, author", { count: "exact" })
-        .eq("user_id", user.id)
+        .select("id, created_at, title, user_id, content, author, image_url", {
+          count: "exact",
+        })
         .order("created_at", { ascending: false })
-        .range(from, to);
+        .range(from, to)
 
       if (error) throw error;
 
@@ -92,6 +95,7 @@ const BlogPage = () => {
             key={blog.id}
             title={blog.title}
             author={blog.author}
+            user_id={blog.user_id}
             created_at={formatDate(blog.created_at)}
             content={excerpt(blog.content)}
             id={blog.id}

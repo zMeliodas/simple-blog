@@ -3,7 +3,7 @@ import { setSelectedBlogId } from "../redux/blogSlice";
 import { useDispatch } from "react-redux";
 import { type BlogTypes } from "../types/types";
 
-const Blog = ({ title, author, created_at, content, id }: BlogTypes) => {
+const Blog = ({ title, author, created_at, content, id, user_id }: BlogTypes) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

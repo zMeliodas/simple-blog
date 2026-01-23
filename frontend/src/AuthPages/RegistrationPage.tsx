@@ -2,6 +2,7 @@ import { useState, type FormEvent } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { useAppSelector } from "../redux/store";
 import { supabase } from "../services/supabaseClient";
+import CustomSpinner from "../common/CustomSpinner";
 
 interface RegisterUserCredentials {
   fullName: string;
@@ -12,6 +13,7 @@ interface RegisterUserCredentials {
 
 const RegistrationPage = () => {
   const { session, initialized } = useAppSelector((state) => state.auth);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
@@ -60,6 +62,8 @@ const RegistrationPage = () => {
       return;
     }
 
+    setIsLoading(true);
+
     try {
       const { error } = await supabase.auth.signUp({
         email: userCredentials.email,
@@ -72,10 +76,11 @@ const RegistrationPage = () => {
       });
 
       if (error) throw error;
+      alert("Registration successful! You can now log in your account.");
     } catch (error) {
       alert(String(error));
     } finally {
-      alert("Registration successful! You can now log in your account.");
+      setIsLoading(false);
     }
   };
 
@@ -144,9 +149,11 @@ const RegistrationPage = () => {
 
             <button
               type="submit"
-              className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition font-medium"
+              disabled={isLoading}
+              className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 disabled:bg-indigo-400 transition font-medium flex gap-2 content-center items-center justify-center"
             >
-              Create Account
+              {isLoading && <CustomSpinner color="color-white" mt="mt-0" />}
+              <span>Create Account</span>
             </button>
           </form>
           <p className="text-center text-gray-600 mt-2">
