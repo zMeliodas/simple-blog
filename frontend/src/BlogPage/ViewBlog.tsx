@@ -86,7 +86,7 @@ const ViewBlog = () => {
 
   return (
     <>
-      <div className="bg-backgroundColor flex flex-col items-center gap-4 h-screen overflow-auto pt-24">
+      <div className="bg-backgroundColor flex flex-col items-center gap-4 h-screen pt-24">
         <div className="w-full max-w-4xl mx-auto px-4 py-8">
           <Link
             to="/home"
@@ -141,7 +141,7 @@ const ViewBlog = () => {
               </div>
             )}
           </article>
-          {/* <CommentSection /> */}
+          <CommentSection />
         </div>
       </div>
     </>
