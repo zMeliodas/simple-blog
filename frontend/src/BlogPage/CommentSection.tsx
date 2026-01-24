@@ -162,7 +162,7 @@ const CommentSection = () => {
         .from("Comments")
         .select("id, blog_id, user_id, author, content, created_at, image_url")
         .eq("blog_id", selectedBlogId)
-        .order("created_at", { ascending: false });
+        .order("created_at", { ascending: true });
 
       if (data) {
         setComments(data);
@@ -226,7 +226,7 @@ const CommentSection = () => {
                   <div className="absolute bottom-full left-0 mb-2 z-50">
                     <EmojiPicker
                       onEmojiClick={onEmojiClick}
-                      width={350}
+                      width={300}
                       height={400}
                       previewConfig={{ showPreview: false }}
                       searchDisabled={true}
