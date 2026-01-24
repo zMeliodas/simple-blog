@@ -2,7 +2,7 @@ import { useState, type ChangeEvent } from "react";
 import { supabase } from "../services/supabaseClient";
 import { Link } from "react-router-dom";
 import { type CreateBlogTypes } from "../types/types";
-import { uploadBlogImage } from "../utils/ImageHandling";
+import { uploadImage } from "../utils/ImageHandling";
 import { MdCloudUpload, MdClose } from "react-icons/md";
 import CustomSpinner from "../common/CustomSpinner";
 
@@ -15,13 +15,13 @@ const CreateBlog = () => {
     const file = e.target.files?.[0];
     if (file) {
       const validTypes = ["image/jpeg", "image/jpg", "image/png"];
+      const fileSizeMB = file.size / (1024 * 1024);
 
       if (!validTypes.includes(file.type)) {
         alert("Please upload a valid image file (PNG, JPG, or JPEG)");
         return;
       }
 
-      const fileSizeMB = file.size / (1024 * 1024);
       if (fileSizeMB > 50) {
         alert("Image size must be less than 50MB");
         return;
@@ -49,7 +49,6 @@ const CreateBlog = () => {
   });
 
   const createBlog = async () => {
-    setIsLoading(true);
     if (!blogInfo.title.trim()) {
       alert("Blog title cannot be empty!");
       return;
@@ -59,6 +58,8 @@ const CreateBlog = () => {
       alert("Blog content cannot be empty!");
       return;
     }
+
+    setIsLoading(true);
 
     try {
       const {
@@ -73,7 +74,7 @@ const CreateBlog = () => {
       let imageUrl = null;
 
       if (image) {
-        imageUrl = await uploadBlogImage(image);
+        imageUrl = await uploadImage(image, "blogs");
         if (!imageUrl) {
           alert("Failed to upload image");
           return;

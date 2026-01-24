@@ -1,12 +1,4 @@
-import type { ReactNode } from "react";
-
-interface PaginationTypes {
-  currentPage: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-  previous: ReactNode;
-  next: ReactNode;
-}
+import { type PaginationTypes } from "../types/types";
 
 const Pagination = ({
   currentPage,

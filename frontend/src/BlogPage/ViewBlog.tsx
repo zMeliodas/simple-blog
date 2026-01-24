@@ -1,11 +1,11 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "../services/supabaseClient";
-import { formatDate } from "../utils/utils";
+import { formatDate } from "../utils/stringUtils.ts";
 import { useAppSelector } from "../redux/store.ts";
 import CustomSpinner from "../common/CustomSpinner.tsx";
 import { type BlogTypes } from "../types/types.ts";
-import { deleteBlogImage } from "../utils/ImageHandling.ts";
+import { deleteImage } from "../utils/ImageHandling.ts";
 import CommentSection from "./CommentSection.tsx";
 
 const ViewBlog = () => {
@@ -32,7 +32,7 @@ const ViewBlog = () => {
         .eq("id", selectedBlogId);
 
       if (blog?.image_url) {
-        await deleteBlogImage(blog.image_url);
+        await deleteImage(blog.image_url);
       }
 
       if (error) throw error;

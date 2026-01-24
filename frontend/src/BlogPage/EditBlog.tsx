@@ -5,7 +5,7 @@ import { supabase } from "../services/supabaseClient.ts";
 import { useNavigate, Link } from "react-router-dom";
 import { type EditBlogTypes } from "../types/types.ts";
 import { MdCloudUpload, MdClose } from "react-icons/md";
-import { uploadBlogImage, deleteBlogImage } from "../utils/ImageHandling.ts";
+import { uploadImage, deleteImage } from "../utils/ImageHandling.ts";
 import CustomSpinner from "../common/CustomSpinner.tsx";
 
 const EditBlog = () => {
@@ -20,13 +20,13 @@ const EditBlog = () => {
     const file = e.target.files?.[0];
     if (file) {
       const validTypes = ["image/jpeg", "image/jpg", "image/png"];
+      const fileSizeMB = file.size / (1024 * 1024);
 
       if (!validTypes.includes(file.type)) {
         alert("Please upload a valid image file (PNG, JPG, or JPEG)");
         return;
       }
-
-      const fileSizeMB = file.size / (1024 * 1024);
+      
       if (fileSizeMB > 50) {
         alert("Image size must be less than 50MB");
         return;
@@ -87,18 +87,18 @@ const EditBlog = () => {
         if (!confirmed) return;
 
         if (blog.image_url) {
-          await deleteBlogImage(blog.image_url);
+          await deleteImage(blog.image_url);
         }
 
         imageUrl = null;
       } else if (image) {
         // Delete old image if it exists
         if (blog.image_url) {
-          await deleteBlogImage(blog.image_url);
+          await deleteImage(blog.image_url);
         }
 
         // Upload new image
-        const newImageUrl = await uploadBlogImage(image);
+        const newImageUrl = await uploadImage(image, "blogs");
 
         if (!newImageUrl) {
           alert("Failed to upload image");

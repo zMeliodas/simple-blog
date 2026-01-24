@@ -1,7 +1,7 @@
 import Blog from "./Blog";
 import { useEffect, useState } from "react";
 import { supabase } from "../services/supabaseClient";
-import { formatDate, excerpt } from "../utils/utils";
+import { formatDate, excerpt } from "../utils/stringUtils";
 import CustomSpinner from "../common/CustomSpinner";
 import Pagination from "../common/Pagination";
 import { FaArrowLeft } from "react-icons/fa6";

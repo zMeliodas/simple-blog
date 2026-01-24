@@ -2,14 +2,16 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface BlogState {
   selectedBlogId: string | null;
+  selectedCommentId: string | null;
 }
 
 const initialState: BlogState = {
   selectedBlogId: null,
+  selectedCommentId: null,
 };
 
 const blogSlice = createSlice({
-  name: 'blog',
+  name: "blog",
   initialState,
   reducers: {
     setSelectedBlogId: (state, action: PayloadAction<string | null>) => {
