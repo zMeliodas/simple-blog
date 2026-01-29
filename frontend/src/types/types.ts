@@ -38,3 +38,8 @@ export interface PaginationTypes {
   previous: ReactNode;
   next: ReactNode;
 }
+
+export interface MenuItem {
+  label: string;
+  onClick: () => void;
+}

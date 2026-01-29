@@ -26,7 +26,7 @@ const EditBlog = () => {
         alert("Please upload a valid image file (PNG, JPG, or JPEG)");
         return;
       }
-      
+
       if (fileSizeMB > 50) {
         alert("Image size must be less than 50MB");
         return;
@@ -77,27 +77,30 @@ const EditBlog = () => {
 
     try {
       let imageUrl = blog.image_url;
+      let imageChanged = false;
 
-      // If a new image is uploaded
       if (imageRemoved) {
         const confirmed = window.confirm(
           "Are you sure you want to update the blog without image?",
         );
 
-        if (!confirmed) return;
+        if (!confirmed) {
+          setIsLoading(false);
+          return;
+        }
 
         if (blog.image_url) {
           await deleteImage(blog.image_url);
         }
 
         imageUrl = null;
+        imageChanged = true;
       } else if (image) {
-        // Delete old image if it exists
+        
         if (blog.image_url) {
           await deleteImage(blog.image_url);
         }
 
-        // Upload new image
         const newImageUrl = await uploadImage(image, "blogs");
 
         if (!newImageUrl) {
@@ -107,15 +110,26 @@ const EditBlog = () => {
         }
 
         imageUrl = newImageUrl;
+        imageChanged = true;
+      }
+
+      const updates: any = {};
+
+      if (updatedBlog.title !== blog.title) {
+        updates.title = updatedBlog.title;
+      }
+
+      if (updatedBlog.content !== blog.content) {
+        updates.content = updatedBlog.content;
+      }
+
+      if (imageChanged) {
+        updates.image_url = imageUrl;
       }
 
       const { error } = await supabase
         .from("Blogs")
-        .update({
-          title: updatedBlog.title,
-          content: updatedBlog.content,
-          image_url: imageUrl,
-        })
+        .update(updates)
         .eq("id", selectedBlogId)
         .select();
 

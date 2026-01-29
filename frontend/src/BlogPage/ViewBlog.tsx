@@ -87,7 +87,7 @@ const ViewBlog = () => {
   return (
     <>
       <div className="bg-backgroundColor flex flex-col items-center gap-4 h-screen pt-24">
-        <div className="w-full max-w-4xl mx-auto px-4 py-8">
+        <div className="w-full max-w-4xl mx-auto px-4 pt-8 py-16 ">
           <Link
             to="/home"
             className="text-indigo-600 hover:text-indigo-800 mb-6 flex items-center gap-2"

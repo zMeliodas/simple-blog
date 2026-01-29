@@ -7,9 +7,9 @@ import { uploadImage, deleteImage } from "../utils/ImageHandling";
 import { useAppSelector } from "../redux/store";
 import { type CommentTypes } from "../types/types";
 import { formatDate } from "../utils/stringUtils";
-import { MdDelete } from "react-icons/md";
 import { BsEmojiSmile } from "react-icons/bs";
 import EmojiPicker from "emoji-picker-react";
+import CommentActions from "../common/CommentActions";
 
 const CommentSection = () => {
   const [commentBoxValue, setCommentBoxValue] = useState<string>("");
@@ -21,8 +21,17 @@ const CommentSection = () => {
   const [comments, setComments] = useState<CommentTypes[]>([]);
   const [showPicker, setShowPicker] = useState(false);
   const emojiPickerRef = useRef<HTMLDivElement>(null);
+  const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
+  const [newCommentValue, setNewCommentValue] = useState<string>("");
+  const [newImage, setNewImage] = useState<File | null>(null);
+  const [newImagePreview, setNewImagePreview] = useState<string | null>(null);
+  const [isEditingComment, setIsEditingComment] = useState<boolean>(false);
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    setImageState: React.Dispatch<React.SetStateAction<File | null>>,
+    setPreviewState: React.Dispatch<React.SetStateAction<string | null>>,
+  ) => {
     const file = e.target.files?.[0];
     if (file) {
       const validTypes = ["image/jpeg", "image/jpg", "image/png"];
@@ -38,11 +47,11 @@ const CommentSection = () => {
         return;
       }
 
-      setImage(file);
+      setImageState(file);
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);
+        setPreviewState(reader.result as string);
       };
 
       reader.readAsDataURL(file);
@@ -68,13 +77,19 @@ const CommentSection = () => {
     };
   }, [showPicker]);
 
-  const onEmojiClick = (emojiObject: any) => {
-    setCommentBoxValue((prev) => prev + emojiObject.emoji);
+  const handleEmojiClick = (
+    emojiObject: any,
+    setValue: React.Dispatch<React.SetStateAction<string>>,
+  ) => {
+    setValue((prev) => prev + emojiObject.emoji);
   };
 
-  const removeImage = (): void => {
-    setImage(null);
-    setImagePreview(null);
+  const handleRemoveImage = (
+    setImageState: React.Dispatch<React.SetStateAction<File | null>>,
+    setPreviewState: React.Dispatch<React.SetStateAction<string | null>>,
+  ) => {
+    setImageState(null);
+    setPreviewState(null);
   };
 
   const handleSubmitComment = async () => {
@@ -155,6 +170,79 @@ const CommentSection = () => {
     }
   };
 
+  const handleEditComment = async (
+    commentId: string,
+    originalContent: string,
+    originalImageUrl: string | null,
+  ) => {
+    if (!newCommentValue.trim() && !newImagePreview) {
+      alert("Comment cannot be empty");
+      return;
+    }
+
+    setIsEditingComment(true);
+
+    try {
+      let imageUrl = originalImageUrl;
+      let imageChanged = false;
+
+      if (!newImagePreview && originalImageUrl) {
+        await deleteImage(originalImageUrl);
+        imageUrl = null;
+        imageChanged = true;
+      } else if (newImage) {
+        if (originalImageUrl) {
+          await deleteImage(originalImageUrl);
+        }
+
+        const uploadedUrl = await uploadImage(newImage, "comments");
+        if (!uploadedUrl) {
+          alert("Failed to upload image");
+          setIsEditingComment(false);
+          return;
+        }
+
+        imageUrl = uploadedUrl;
+        imageChanged = true;
+      }
+
+      const updates: any = {};
+
+      if (newCommentValue !== originalContent) {
+        updates.content = newCommentValue;
+      }
+
+      if (imageChanged) {
+        updates.image_url = imageUrl;
+      }
+
+      const { error } = await supabase
+        .from("Comments")
+        .update(updates)
+        .eq("id", commentId);
+
+      if (error) throw error;
+
+      fetchComments();
+
+      setEditingCommentId(null);
+      setNewCommentValue("");
+      setNewImage(null);
+      setNewImagePreview(null);
+    } catch (error) {
+      alert(`${error}`);
+    } finally {
+      setIsEditingComment(false);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingCommentId(null);
+    setNewCommentValue("");
+    setNewImage(null);
+    setNewImagePreview(null);
+  };
+
   const fetchComments = async () => {
     try {
       setIsLoading(true);
@@ -210,7 +298,9 @@ const CommentSection = () => {
                 type="file"
                 id="image-upload"
                 accept=".jpg,.jpeg,.png"
-                onChange={handleImageChange}
+                onChange={(e) =>
+                  handleImageChange(e, setImage, setImagePreview)
+                }
                 className="hidden"
               />
 
@@ -225,7 +315,9 @@ const CommentSection = () => {
                 {showPicker && (
                   <div className="absolute bottom-full left-0 mb-2 z-50">
                     <EmojiPicker
-                      onEmojiClick={onEmojiClick}
+                      onEmojiClick={(e) =>
+                        handleEmojiClick(e, setCommentBoxValue)
+                      }
                       width={300}
                       height={400}
                       previewConfig={{ showPreview: false }}
@@ -256,7 +348,7 @@ const CommentSection = () => {
               />
 
               <button
-                onClick={removeImage}
+                onClick={() => handleRemoveImage(setImage, setImagePreview)}
                 className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
               >
                 <MdClose className="w-5 h-5" />
@@ -280,34 +372,144 @@ const CommentSection = () => {
                 {formatDate(comment.created_at)}
               </p>
             </div>
+            {editingCommentId !== comment.id ? (
+              <div className="group flex justify-between">
+                <div className="flex flex-col">
+                  <p className="text-gray-700 leading-relaxed mb-1">
+                    {comment.content}
+                  </p>
 
-            <div className="flex justify-between">
-              <div className="flex flex-col">
-                <p className="text-gray-700 leading-relaxed mb-1">
-                  {comment.content}
-                </p>
+                  {comment.image_url && (
+                    <img
+                      className="w-54 h-full object-fill rounded-lg z-0"
+                      src={comment.image_url}
+                      alt=""
+                    />
+                  )}
+                </div>
 
-                {comment.image_url && (
-                  <img
-                    className="w-54 h-full object-fill rounded-lg z-0"
-                    src={comment.image_url}
-                    alt=""
+                <div className="flex content-center items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                  {session?.user.id === comment.user_id && (
+                    <CommentActions
+                      items={[
+                        {
+                          label: "Edit",
+                          onClick: () => {
+                            setEditingCommentId(comment.id);
+                            setNewCommentValue(comment.content);
+                            setNewImagePreview(comment.image_url || null);
+                          },
+                        },
+                        {
+                          label: "Delete",
+                          onClick: () => {
+                            handleDeleteComment(comment.id, comment.image_url);
+                          },
+                        },
+                      ]}
+                    />
+                  )}
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="flex flex-col mb-1 border border-gray-300 rounded-xl">
+                  <textarea
+                    className="w-full px-4 py-2 border-gray-300 rounded-md focus:ring-1 focus:ring-transparent focus:border-transparent min-h-18 outline-none resize-none"
+                    value={newCommentValue}
+                    onChange={(e) => setNewCommentValue(e.target.value)}
                   />
+
+                  <div className="flex flex-row justify-between content-center items-center mt-1 mx-1 mb-1">
+                    <div className="flex content-center items-center">
+                      <label
+                        htmlFor="image-update"
+                        className="hover:bg-gray-300 disabled:text-gray-400 disabled:hover:bg-transparent disabled:cursor-not-allowed text-indigo-600 pr-7.5 pl-1.5 py-1.5 w-8 rounded-full font-medium transition"
+                      >
+                        <IoCameraOutline className="w-6 h-6" />
+                      </label>
+                      <input
+                        type="file"
+                        id="image-update"
+                        accept=".jpg,.jpeg,.png"
+                        onChange={(e) =>
+                          handleImageChange(e, setNewImage, setNewImagePreview)
+                        }
+                        className="hidden"
+                      />
+
+                      <div className="relative" ref={emojiPickerRef}>
+                        <button
+                          onClick={() => setShowPicker(!showPicker)}
+                          className="hover:bg-gray-300 disabled:text-gray-400 disabled:hover:bg-transparent disabled:cursor-not-allowed text-indigo-600 pr-1 pl-1.5 py-1.5 w-8 rounded-full font-medium transition"
+                        >
+                          <BsEmojiSmile className="w-5 h-5" />
+                        </button>
+
+                        {showPicker && (
+                          <div className="absolute bottom-full left-0 mb-2 z-50">
+                            <EmojiPicker
+                              onEmojiClick={(e) =>
+                                handleEmojiClick(e, setNewCommentValue)
+                              }
+                              width={300}
+                              height={400}
+                              previewConfig={{ showPreview: false }}
+                              searchDisabled={true}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() =>
+                        handleEditComment(
+                          comment.id,
+                          comment.content,
+                          comment.image_url,
+                        )
+                      }
+                      disabled={
+                        isEditingComment ||
+                        (newCommentValue === comment.content &&
+                          newImagePreview === comment.image_url)
+                      }
+                      className="hover:bg-gray-300 disabled:text-gray-400 disabled:hover:bg-transparent disabled:cursor-not-allowed text-indigo-600 pl-2.5 p-2 w-8 rounded-full font-medium transition"
+                    >
+                      <IoSend aria-label="Send comment" />
+                    </button>
+                  </div>
+                </div>
+                {newImagePreview && (
+                  <div className="relative w-54 max-w-sm">
+                    <div className="relative h-full w-full overflow-hidden rounded-xl bg-gray-100">
+                      <img
+                        src={newImagePreview}
+                        alt="Preview"
+                        className="w-full h-full object-fill rounded-lg z-0"
+                      />
+
+                      <button
+                        onClick={() =>
+                          handleRemoveImage(setNewImage, setNewImagePreview)
+                        }
+                        className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
+                      >
+                        <MdClose className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
                 )}
-              </div>
-              <div className="flex content-center items-center">
-                {session?.user.id === comment.user_id && (
-                  <button
-                    className="p-2 hover:bg-gray-300 rounded-full"
-                    onClick={() => {
-                      handleDeleteComment(comment.id, comment.image_url);
-                    }}
-                  >
-                    <MdDelete className="w-5 h-5 text-red-500" />
-                  </button>
-                )}
-              </div>
-            </div>
+
+                <button
+                  onClick={handleCancelEdit}
+                  className="px-1 py-1.5 text-sm text-blue-500 font-medium hover:underline rounded-lg transition"
+                >
+                  Cancel
+                </button>
+              </>
+            )}
           </div>
         ))}
       </div>
