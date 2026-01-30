@@ -388,7 +388,7 @@ const CommentSection = () => {
                   )}
                 </div>
 
-                <div className="flex content-center items-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex content-center items-center opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                   {session?.user.id === comment.user_id && (
                     <CommentActions
                       items={[
