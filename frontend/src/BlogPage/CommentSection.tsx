@@ -1,15 +1,12 @@
 import { useState, type ChangeEvent, useEffect, useRef } from "react";
-import { IoCameraOutline } from "react-icons/io5";
-import { IoSend } from "react-icons/io5";
-import { MdClose } from "react-icons/md";
 import { supabase } from "../services/supabaseClient";
 import { uploadImage, deleteImage } from "../utils/ImageHandling";
 import { useAppSelector } from "../redux/store";
 import { type CommentTypes } from "../types/types";
 import { formatDate } from "../utils/stringUtils";
-import { BsEmojiSmile } from "react-icons/bs";
-import EmojiPicker from "emoji-picker-react";
 import CommentActions from "../common/CommentActions";
+import CommentInput from "../common/CommentInput";
+import ImagePrev from "../common/ImagePrev";
 
 const CommentSection = () => {
   const [commentBoxValue, setCommentBoxValue] = useState<string>("");
@@ -278,85 +275,29 @@ const CommentSection = () => {
           Leave a Comment
         </h3>
 
-        <div className="flex flex-col mb-1 border border-gray-300 rounded-xl">
-          <textarea
-            className="w-full px-4 py-2 border-gray-300 rounded-md focus:ring-1 focus:ring-transparent focus:border-transparent min-h-18 outline-none resize-none"
-            value={commentBoxValue}
-            onChange={(e) => setCommentBoxValue(e.target.value)}
-            placeholder="Share your thoughts..."
-          />
-
-          <div className="flex flex-row justify-between content-center items-center mt-1 mx-1 mb-1">
-            <div className="flex content-center items-center">
-              <label
-                htmlFor="image-upload"
-                className="hover:bg-gray-300 disabled:text-gray-400 disabled:hover:bg-transparent disabled:cursor-not-allowed text-indigo-600 pr-7.5 pl-1.5 py-1.5 w-8 rounded-full font-medium transition"
-              >
-                <IoCameraOutline className="w-6 h-6" />
-              </label>
-              <input
-                type="file"
-                id="image-upload"
-                accept=".jpg,.jpeg,.png"
-                onChange={(e) =>
-                  handleImageChange(e, setImage, setImagePreview)
-                }
-                className="hidden"
-              />
-
-              <div className="relative" ref={emojiPickerRef}>
-                <button
-                  onClick={() => setShowPicker(!showPicker)}
-                  className="hover:bg-gray-300 disabled:text-gray-400 disabled:hover:bg-transparent disabled:cursor-not-allowed text-indigo-600 pr-1 pl-1.5 py-1.5 w-8 rounded-full font-medium transition"
-                >
-                  <BsEmojiSmile className="w-5 h-5" />
-                </button>
-
-                {showPicker && (
-                  <div className="absolute bottom-full left-0 mb-2 z-50">
-                    <EmojiPicker
-                      onEmojiClick={(e) =>
-                        handleEmojiClick(e, setCommentBoxValue)
-                      }
-                      width={300}
-                      height={400}
-                      previewConfig={{ showPreview: false }}
-                      searchDisabled={true}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <button
-              disabled={isLoading || (!commentBoxValue && !imagePreview)}
-              onClick={handleSubmitComment}
-              className="hover:bg-gray-300 disabled:text-gray-400 disabled:hover:bg-transparent disabled:cursor-not-allowed text-indigo-600 pl-2.5 p-2 w-8 rounded-full font-medium transition"
-            >
-              <IoSend aria-label="Send comment" />
-            </button>
-          </div>
-        </div>
+        <CommentInput
+          commentBoxValue={commentBoxValue}
+          setCommentBoxValue={setCommentBoxValue}
+          handleImageChange={(e) =>
+            handleImageChange(e, setImage, setImagePreview)
+          }
+          emojiPickerRef={emojiPickerRef}
+          showPicker={showPicker}
+          setShowPicker={setShowPicker}
+          handleEmojiClick={(e) => handleEmojiClick(e, setCommentBoxValue)}
+          isLoading={isLoading}
+          imagePreview={imagePreview}
+          handleSubmitComment={handleSubmitComment}
+        />
 
         {imagePreview && (
-          <div className="relative w-54 max-w-sm">
-            <div className="relative h-full w-full overflow-hidden rounded-xl bg-gray-100">
-              <img
-                src={imagePreview}
-                alt="Preview"
-                className="w-full h-full object-fill rounded-lg z-0"
-              />
-
-              <button
-                onClick={() => handleRemoveImage(setImage, setImagePreview)}
-                className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
-              >
-                <MdClose className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="mt-1 text-sm text-gray-700">{image?.name}</div>
-          </div>
+          <ImagePrev
+            handleRemoveImage={() =>
+              handleRemoveImage(setImage, setImagePreview)
+            }
+            imagePreview={imagePreview}
+            imageName={image?.name}
+          />
         )}
       </div>
 
@@ -388,7 +329,7 @@ const CommentSection = () => {
                   )}
                 </div>
 
-                <div className="flex content-center items-center text-gray-600 transition-opacity">
+                <div className="flex content-center items-center text-gray-600">
                   {session?.user.id === comment.user_id && (
                     <CommentActions
                       items={[
@@ -413,93 +354,43 @@ const CommentSection = () => {
               </div>
             ) : (
               <>
-                <div className="flex flex-col mb-1 border border-gray-300 rounded-xl">
-                  <textarea
-                    className="w-full px-4 py-2 border-gray-300 rounded-md focus:ring-1 focus:ring-transparent focus:border-transparent min-h-18 outline-none resize-none"
-                    value={newCommentValue}
-                    onChange={(e) => setNewCommentValue(e.target.value)}
-                  />
+                <CommentInput
+                  commentBoxValue={newCommentValue}
+                  setCommentBoxValue={setNewCommentValue}
+                  handleImageChange={(e) =>
+                    handleImageChange(e, setNewImage, setNewImagePreview)
+                  }
+                  emojiPickerRef={emojiPickerRef}
+                  showPicker={showPicker}
+                  setShowPicker={setShowPicker}
+                  handleEmojiClick={(e) =>
+                    handleEmojiClick(e, setNewCommentValue)
+                  }
+                  isLoading={isEditingComment}
+                  imagePreview={newImagePreview}
+                  handleSubmitComment={() =>
+                    handleEditComment(
+                      comment.id,
+                      comment.content,
+                      comment.image_url,
+                    )
+                  }
+                  placeholder=""
+                  inputId="image-update"
+                  isEditing={true}
+                  hasChanges={
+                    newCommentValue !== comment.content ||
+                    newImagePreview !== comment.image_url
+                  }
+                />
 
-                  <div className="flex flex-row justify-between content-center items-center mt-1 mx-1 mb-1">
-                    <div className="flex content-center items-center">
-                      <label
-                        htmlFor="image-update"
-                        className="hover:bg-gray-300 disabled:text-gray-400 disabled:hover:bg-transparent disabled:cursor-not-allowed text-indigo-600 pr-7.5 pl-1.5 py-1.5 w-8 rounded-full font-medium transition"
-                      >
-                        <IoCameraOutline className="w-6 h-6" />
-                      </label>
-                      <input
-                        type="file"
-                        id="image-update"
-                        accept=".jpg,.jpeg,.png"
-                        onChange={(e) =>
-                          handleImageChange(e, setNewImage, setNewImagePreview)
-                        }
-                        className="hidden"
-                      />
-
-                      <div className="relative" ref={emojiPickerRef}>
-                        <button
-                          onClick={() => setShowPicker(!showPicker)}
-                          className="hover:bg-gray-300 disabled:text-gray-400 disabled:hover:bg-transparent disabled:cursor-not-allowed text-indigo-600 pr-1 pl-1.5 py-1.5 w-8 rounded-full font-medium transition"
-                        >
-                          <BsEmojiSmile className="w-5 h-5" />
-                        </button>
-
-                        {showPicker && (
-                          <div className="absolute bottom-full left-0 mb-2 z-50">
-                            <EmojiPicker
-                              onEmojiClick={(e) =>
-                                handleEmojiClick(e, setNewCommentValue)
-                              }
-                              width={300}
-                              height={400}
-                              previewConfig={{ showPreview: false }}
-                              searchDisabled={true}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() =>
-                        handleEditComment(
-                          comment.id,
-                          comment.content,
-                          comment.image_url,
-                        )
-                      }
-                      disabled={
-                        isEditingComment ||
-                        (newCommentValue === comment.content &&
-                          newImagePreview === comment.image_url)
-                      }
-                      className="hover:bg-gray-300 disabled:text-gray-400 disabled:hover:bg-transparent disabled:cursor-not-allowed text-indigo-600 pl-2.5 p-2 w-8 rounded-full font-medium transition"
-                    >
-                      <IoSend aria-label="Send comment" />
-                    </button>
-                  </div>
-                </div>
                 {newImagePreview && (
-                  <div className="relative w-54 max-w-sm">
-                    <div className="relative h-full w-full overflow-hidden rounded-xl bg-gray-100">
-                      <img
-                        src={newImagePreview}
-                        alt="Preview"
-                        className="w-full h-full object-fill rounded-lg z-0"
-                      />
-
-                      <button
-                        onClick={() =>
-                          handleRemoveImage(setNewImage, setNewImagePreview)
-                        }
-                        className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
-                      >
-                        <MdClose className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </div>
+                  <ImagePrev
+                    handleRemoveImage={() =>
+                      handleRemoveImage(setNewImage, setNewImagePreview)
+                    }
+                    imagePreview={newImagePreview}
+                  />
                 )}
 
                 <button

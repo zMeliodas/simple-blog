@@ -3,7 +3,7 @@ import { useAppSelector } from "../redux/store.ts";
 import { useEffect } from "react";
 import { supabase } from "../services/supabaseClient.ts";
 import { useNavigate, Link } from "react-router-dom";
-import { type EditBlogTypes } from "../types/types.ts";
+import { type CreateBlogTypes } from "../types/types.ts";
 import { MdCloudUpload, MdClose } from "react-icons/md";
 import { uploadImage, deleteImage } from "../utils/ImageHandling.ts";
 import CustomSpinner from "../common/CustomSpinner.tsx";
@@ -50,13 +50,13 @@ const EditBlog = () => {
     setImageRemoved(true);
   };
 
-  const [updatedBlog, setUpdatedBlog] = useState<EditBlogTypes>({
+  const [updatedBlog, setUpdatedBlog] = useState<CreateBlogTypes>({
     title: "",
     content: "",
     image_url: "",
   });
 
-  const [blog, setBlog] = useState<EditBlogTypes>({
+  const [blog, setBlog] = useState<CreateBlogTypes>({
     title: "",
     content: "",
     image_url: "",

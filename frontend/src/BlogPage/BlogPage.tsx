@@ -35,22 +35,13 @@ const BlogPage = () => {
       const from = (page - 1) * PAGE_SIZE;
       const to = from + PAGE_SIZE - 1;
 
-      // const { data, error, count } = await supabase
-      //   .from("Blogs")
-      //   .select("id, created_at, title, content, author, image_url", {
-      //     count: "exact",
-      //   })
-      //   .eq("user_id", user.id)
-      //   .order("created_at", { ascending: false })
-      //   .range(from, to);
-
-        const { data, error, count } = await supabase
+      const { data, error, count } = await supabase
         .from("Blogs")
         .select("id, created_at, title, user_id, content, author, image_url", {
           count: "exact",
         })
         .order("created_at", { ascending: false })
-        .range(from, to)
+        .range(from, to);
 
       if (error) throw error;
 

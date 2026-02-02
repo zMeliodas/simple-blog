@@ -1,10 +1,10 @@
-import type { ReactNode } from "react";
+import type { ReactNode, ChangeEvent } from "react";
 
 export interface BlogTypes {
   id: string;
   created_at: string;
   title: string;
-  user_id: string;
+  user_id?: string;
   content: string;
   author: string;
   image_url?: string | null;
@@ -13,22 +13,7 @@ export interface BlogTypes {
 export interface CreateBlogTypes {
   title: string;
   content: string;
-}
-
-export interface EditBlogTypes {
-  title: string;
-  content: string;
   image_url?: string | null;
-}
-
-export interface CommentTypes {
-  id: string;
-  blog_id: string,
-  user_id: string,
-  created_at: string;
-  content: string;
-  author: string;
-  image_url: string | null;
 }
 
 export interface PaginationTypes {
@@ -42,4 +27,37 @@ export interface PaginationTypes {
 export interface MenuItem {
   label: string;
   onClick: () => void;
+}
+
+export interface CommentInputProps {
+  commentBoxValue: string;
+  setCommentBoxValue: (value: string) => void;
+  handleImageChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  emojiPickerRef: React.RefObject<HTMLDivElement | null>;
+  showPicker: boolean;
+  setShowPicker: (show: boolean) => void;
+  handleEmojiClick: (emojiObject: any) => void;
+  isLoading: boolean;
+  imagePreview: string | null;
+  handleSubmitComment: () => void;
+  placeholder?: string;
+  inputId?: string;
+  isEditing?: boolean;
+  hasChanges?: boolean;
+}
+
+export interface CommentTypes {
+  id: string;
+  blog_id: string;
+  user_id: string;
+  created_at: string;
+  content: string;
+  author: string;
+  image_url: string | null;
+}
+
+export interface imagePreviewProps {
+  handleRemoveImage: () => void;
+  imagePreview: string;
+  imageName?: string;
 }
