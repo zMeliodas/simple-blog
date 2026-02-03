@@ -23,14 +23,6 @@ const BlogPage = () => {
   const fetchBlogs = async (page: number) => {
     try {
       setIsLoading(true);
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-
-      if (!user) {
-        alert("User not authenticated");
-        return;
-      }
 
       const from = (page - 1) * PAGE_SIZE;
       const to = from + PAGE_SIZE - 1;
@@ -70,9 +62,9 @@ const BlogPage = () => {
 
   return (
     <div className="bg-backgroundColor flex flex-col items-center gap-2 pt-24 p-4 h-screen">
-      <button className="text-indigo-600 font-bold text-3xl pt-4 pb-2">
+      <p className="text-indigo-600 font-bold text-3xl pt-4 pb-2">
         Latest Blog Posts
-      </button>
+      </p>
 
       {blogs.length < 1 ? (
         <div className="flex items-center justify-center">

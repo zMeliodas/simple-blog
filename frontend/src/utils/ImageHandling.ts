@@ -2,12 +2,10 @@ import { supabase } from "../services/supabaseClient";
 
 export const uploadImage = async (file: File, folder: "comments" | "blogs"): Promise<string | null> => {
   try {
-    // Create unique filename
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
     const filePath = `${folder}/${fileName}`;
 
-    // Upload to Supabase Storage
     const { data, error } = await supabase.storage
       .from('blog-images')
       .upload(filePath, file, {
@@ -20,7 +18,6 @@ export const uploadImage = async (file: File, folder: "comments" | "blogs"): Pro
       throw error;
     }
 
-    // Get public URL
     const { data: { publicUrl } } = supabase.storage
       .from('blog-images')
       .getPublicUrl(data.path);
@@ -34,7 +31,6 @@ export const uploadImage = async (file: File, folder: "comments" | "blogs"): Pro
 
 export const deleteImage = async (imageUrl: string): Promise<boolean> => {
   try {
-    // Extract path from URL
     const urlParts = imageUrl.split('/blog-images/');
 
     if (urlParts.length < 2) return false;
